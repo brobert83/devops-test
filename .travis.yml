@@ -2,6 +2,7 @@ language: node_js
 node_js:
   - 12
 install: npm test
+
 env:
   global:
     - GCP_PROJECT_ID=buildit-devops-test
