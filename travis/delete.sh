@@ -15,6 +15,8 @@ health_check_name=${name}-health-check
 frontend_forwarding_rule=${name}-frontend-forwarding-rule
 firewall_lb_allow_name=${name}-fw-allow-health-check-and-proxy
 
+echo -e "\n====== Deleting environment: ${name} ======"
+
 gcloud compute forwarding-rules delete ${frontend_forwarding_rule} --global -q || true
 gcloud compute target-http-proxies delete ${http_proxy_name} -q || true
 gcloud compute url-maps delete ${url_map_name} -q || true
