@@ -1,2 +1,2 @@
 *.iml
-secrets/
+gcp_project_key.json
