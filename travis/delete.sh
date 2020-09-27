@@ -15,13 +15,13 @@ health_check_name=${name}-health-check
 frontend_forwarding_rule=${name}-frontend-forwarding-rule
 firewall_lb_allow_name=${name}-fw-allow-health-check-and-proxy
 
-gcloud compute forwarding-rules delete ${frontend_forwarding_rule} --global -q
-gcloud compute target-http-proxies delete ${http_proxy_name} -q
-gcloud compute url-maps delete ${url_map_name} -q
-gcloud compute backend-services delete ${service_name} --global -q
-gcloud compute --project=${project} instance-groups managed delete ${instance_group_name} --zone=${zone} -q
-gcloud beta compute --project=${project} instance-templates delete ${instance_template} -q
-gcloud compute health-checks delete ${health_check_name} -q
-gcloud compute addresses delete ${address_name} --global -q
-gcloud compute firewall-rules delete ${firewall_lb_allow_name} -q
+gcloud compute forwarding-rules delete ${frontend_forwarding_rule} --global -q || true
+gcloud compute target-http-proxies delete ${http_proxy_name} -q || true
+gcloud compute url-maps delete ${url_map_name} -q || true
+gcloud compute backend-services delete ${service_name} --global -q || true
+gcloud compute --project=${project} instance-groups managed delete ${instance_group_name} --zone=${zone} -q || true
+gcloud beta compute --project=${project} instance-templates delete ${instance_template} -q || true
+gcloud compute health-checks delete ${health_check_name} -q || true
+gcloud compute addresses delete ${address_name} --global -q || true
+gcloud compute firewall-rules delete ${firewall_lb_allow_name} -q || true
 

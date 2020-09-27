@@ -24,19 +24,24 @@ before_install:
   - gcloud services enable compute.googleapis.com
   - gcloud services enable iam.googleapis.com
 
-script:
+stages:
 
-  - travis/delete.sh
-    ${TRAVIS_BRANCH}
-    ${GCP_PROJECT_ID}
-    ${GCP_ZONE}
+  - name: deploy
+    if: branch != master AND type = push
 
-  - travis/create.sh
-    ${TRAVIS_BRANCH}
-    ${GCP_PROJECT_ID}
-    ${GCP_SERVICE_ACCOUNT_NAME}
-    ${GCP_REGION}
-    ${GCP_ZONE}
-    ${FRONTEND_PORT}
-    ${BACKEND_PORT}
+    script:
+
+      - travis/delete.sh
+        ${TRAVIS_BRANCH}
+        ${GCP_PROJECT_ID}
+        ${GCP_ZONE}
+
+      - travis/create.sh
+        ${TRAVIS_BRANCH}
+        ${GCP_PROJECT_ID}
+        ${GCP_SERVICE_ACCOUNT_NAME}
+        ${GCP_REGION}
+        ${GCP_ZONE}
+        ${FRONTEND_PORT}
+        ${BACKEND_PORT}
 
