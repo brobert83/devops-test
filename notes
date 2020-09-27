@@ -1,0 +1,2 @@
+- encrypted the gcp_project_key.json using:
+    travis encrypt-file --pro gcp_project_key.json
