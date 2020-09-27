@@ -113,11 +113,12 @@ set +x
 
 echo -e "Frontend IP: ${frontend_ip}\n"
 
-echo "Waiting to become available "
-
-until $(curl --output /dev/null --silent --head --fail http://${frontend_ip}); do
-    echo -n '.'
-    sleep 5
-done
-
-echo "Deployment done"
+#todo: enable this when things are stable
+#echo "Waiting to become available "
+#
+#until $(curl --output /dev/null --silent --head --fail http://${frontend_ip}); do
+#    echo -n '.'
+#    sleep 5
+#done
+#
+#echo "Deployment done"
