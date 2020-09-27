@@ -14,13 +14,9 @@ env:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
 jobs:
-
   include:
-
-    stage: deploy
-
-      if: branch != master AND type = push
-
+    - stage: deploy
+      if: NOT branch = master
       before_install:
         - openssl aes-256-cbc -K $encrypted_aeb129230bb8_key -iv $encrypted_aeb129230bb8_iv -in gcp_project_key.json.enc -out gcp_project_key.json -d
         - curl https://sdk.cloud.google.com | bash > /dev/null
@@ -32,7 +28,6 @@ jobs:
         - gcloud services enable cloudresourcemanager.googleapis.com
         - gcloud services enable compute.googleapis.com
         - gcloud services enable iam.googleapis.com
-
       script:
         - travis/delete.sh
           ${TRAVIS_BRANCH}
