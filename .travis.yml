@@ -25,6 +25,11 @@ before_install:
   - gcloud services enable iam.googleapis.com
 
 script:
+  - travis/delete
+    ${TRAVIS_BRANCH}
+    ${GCP_PROJECT_ID}
+    ${GCP_ZONE}
+
   - travis/create.sh
     ${TRAVIS_BRANCH}
     ${GCP_PROJECT_ID}
