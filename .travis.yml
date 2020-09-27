@@ -12,36 +12,37 @@ env:
     - BACKEND_PORT=3000
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
-before_install:
-  - openssl aes-256-cbc -K $encrypted_aeb129230bb8_key -iv $encrypted_aeb129230bb8_iv -in gcp_project_key.json.enc -out gcp_project_key.json -d
-  - curl https://sdk.cloud.google.com | bash > /dev/null
-  - source "$HOME/google-cloud-sdk/path.bash.inc"
-  - gcloud auth activate-service-account --key-file=gcp_project_key.json
-  - gcloud config set project "${GCP_PROJECT_ID}"
-  - gcloud components install beta
-  - gcloud services enable cloudapis.googleapis.com
-  - gcloud services enable cloudresourcemanager.googleapis.com
-  - gcloud services enable compute.googleapis.com
-  - gcloud services enable iam.googleapis.com
+jobs:
 
-stages:
+  include:
 
-  - name: deploy
-    if: branch != master AND type = push
+    stage: deploy
 
-    script:
+      if: branch != master AND type = push
 
-      - travis/delete.sh
-        ${TRAVIS_BRANCH}
-        ${GCP_PROJECT_ID}
-        ${GCP_ZONE}
+      before_install:
+        - openssl aes-256-cbc -K $encrypted_aeb129230bb8_key -iv $encrypted_aeb129230bb8_iv -in gcp_project_key.json.enc -out gcp_project_key.json -d
+        - curl https://sdk.cloud.google.com | bash > /dev/null
+        - source "$HOME/google-cloud-sdk/path.bash.inc"
+        - gcloud auth activate-service-account --key-file=gcp_project_key.json
+        - gcloud config set project "${GCP_PROJECT_ID}"
+        - gcloud components install beta
+        - gcloud services enable cloudapis.googleapis.com
+        - gcloud services enable cloudresourcemanager.googleapis.com
+        - gcloud services enable compute.googleapis.com
+        - gcloud services enable iam.googleapis.com
 
-      - travis/create.sh
-        ${TRAVIS_BRANCH}
-        ${GCP_PROJECT_ID}
-        ${GCP_SERVICE_ACCOUNT_NAME}
-        ${GCP_REGION}
-        ${GCP_ZONE}
-        ${FRONTEND_PORT}
-        ${BACKEND_PORT}
+      script:
+        - travis/delete.sh
+          ${TRAVIS_BRANCH}
+          ${GCP_PROJECT_ID}
+          ${GCP_ZONE}
 
+        - travis/create.sh
+          ${TRAVIS_BRANCH}
+          ${GCP_PROJECT_ID}
+          ${GCP_SERVICE_ACCOUNT_NAME}
+          ${GCP_REGION}
+          ${GCP_ZONE}
+          ${FRONTEND_PORT}
+          ${BACKEND_PORT}
