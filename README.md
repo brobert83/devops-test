@@ -25,14 +25,14 @@ The build will:
         - edit the `.travis.yml` global variables to point to your project (project name, service account name, etc)
         
 - When a branch is created or a commit is pushed to a branch, this build will create a environment specific to that branch
-    - the name of the environment is the branch name will all characters but letters and numbers removed (due to GCP naming restrictions for various resources)            
+    - the name of the environment is the branch name with all characters but letters and numbers removed (due to GCP naming restrictions for various resources)            
     - the build will first attempt to delete the branch specific environment before creating it
     - this is the output of the last successful build: https://travis-ci.com/github/brobert83/devops-test/builds/186913415
     - at the end it shows where the app is deployed 
     ![Alt text](docs/output_target.png?raw=true)
     - I will keep this one alive for a while http://35.190.76.97 
     
-- The environment creation scripts where largely developed using this environment [devops-test-vm](https://github.com/brobert83/devops-test-vm)    
+- The environment creation scripts were largely developed using this environment [devops-test-vm](https://github.com/brobert83/devops-test-vm)    
 
 # Caveats
 - On branch delete the environment will NOT be deleted (I don't know how to do that yet)
