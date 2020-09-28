@@ -34,3 +34,5 @@ cluster_name=$3
     --enable-autoupgrade \
     --enable-autorepair \
     --max-surge-upgrade 1
+
+gcloud container clusters get-credentials ${clustername}
