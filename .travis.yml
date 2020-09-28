@@ -1,7 +1,6 @@
 language: node_js
 node_js:
   - 12
-install: npm test
 services: docker
 env:
   global:
@@ -29,7 +28,7 @@ jobs:
         - gcloud services enable cloudresourcemanager.googleapis.com
         - gcloud services enable compute.googleapis.com
         - gcloud services enable iam.googleapis.com
-        - if [[ "$TRAVIS_BRANCH" =~ ^feature_gke.*$ ]]; then
+        - if [[ "$TRAVIS_BRANCH" =~ ^gke_feature.*$ ]]; then
             gcloud auth configure-docker;
             gcloud components update kubectl;
             gcloud container clusters get-credentials $CLUSTER_NAME;
