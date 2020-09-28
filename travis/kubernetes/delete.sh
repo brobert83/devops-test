@@ -1,6 +1,6 @@
 #!/bin/bash
 
-namespace=$1
+namespace=$(echo $1 | tr -cd "'[:alnum:]")
 
 kubectl delete -n ${namespace} pod,svc,ingress --all
 

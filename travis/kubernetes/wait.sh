@@ -1,6 +1,6 @@
 #!/bin/bash
 
-namespace=$1
+namespace=$(echo $1 | tr -cd "'[:alnum:]")
 
 echo -e "\n====== Waiting for environment to become available: ${namespace} ======"
 
