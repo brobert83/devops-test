@@ -35,5 +35,4 @@ cluster_name=$3
     --enable-autorepair \
     --max-surge-upgrade 1
 
-set -x
 gcloud container clusters get-credentials ${cluster_name} --zone=${zone}

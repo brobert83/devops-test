@@ -33,7 +33,6 @@ jobs:
         - if [[ "$TRAVIS_BRANCH" =~ ^gke_feature.*$ ]]; then
             gcloud auth configure-docker;
             gcloud components update kubectl;
-            gcloud container clusters get-credentials $CLUSTER_NAME;
             gcloud services enable container.googleapis.com;
           fi
 
