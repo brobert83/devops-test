@@ -21,8 +21,8 @@ for instance in $(gcloud compute instance-groups list-instances ${instance_group
   gcloud compute scp \
     --strict-host-key-checking=no \
     --zone=${zone} \
-    index.js \
-    package.json \
+    src/index.js \
+    src/package.json \
     root@${instance}:/opt/buildit-devops-test \
     -q
 

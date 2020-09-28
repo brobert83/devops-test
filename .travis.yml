@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - 12
 install: npm test
-
+services: docker
 env:
   global:
     - GCP_PROJECT_ID=buildit-devops-test
@@ -12,6 +12,8 @@ env:
     - FRONTEND_PORT=80
     - BACKEND_PORT=3000
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+    - IMAGE=gcr.io/buildit-devops-test/devops-test
+    - GKE_CLUSTER_NAME=buildit-devops-test
 
 jobs:
   include:
@@ -27,12 +29,26 @@ jobs:
         - gcloud services enable cloudresourcemanager.googleapis.com
         - gcloud services enable compute.googleapis.com
         - gcloud services enable iam.googleapis.com
+        - if [[ "$TRAVIS_BRANCH" =~ ^feature_gke.*$ ]]; then
+            gcloud auth configure-docker;
+            gcloud components update kubectl;
+            gcloud container clusters get-credentials $CLUSTER_NAME;
+            gcloud services enable container.googleapis.com;
+          fi
 
       script:
+
         - if [[ "$TRAVIS_BRANCH" =~ ^feature.*$ ]]; then
-            travis/delete.sh ${TRAVIS_BRANCH} ${GCP_PROJECT_ID} ${GCP_ZONE};
-            travis/create.sh ${TRAVIS_BRANCH} ${GCP_PROJECT_ID} ${GCP_SERVICE_ACCOUNT_NAME} ${GCP_REGION} ${GCP_ZONE} ${FRONTEND_PORT} ${BACKEND_PORT};
-            travis/deploy.sh ${TRAVIS_BRANCH} ${GCP_ZONE};
-            travis/start.sh  ${TRAVIS_BRANCH} ${GCP_ZONE};
-            travis/wait.sh   ${TRAVIS_BRANCH};
+            travis/classic/delete.sh ${TRAVIS_BRANCH} ${GCP_PROJECT_ID} ${GCP_ZONE};
+            travis/classic/create.sh ${TRAVIS_BRANCH} ${GCP_PROJECT_ID} ${GCP_SERVICE_ACCOUNT_NAME} ${GCP_REGION} ${GCP_ZONE} ${FRONTEND_PORT} ${BACKEND_PORT};
+            travis/classic/deploy.sh ${TRAVIS_BRANCH} ${GCP_ZONE};
+            travis/classic/start.sh  ${TRAVIS_BRANCH} ${GCP_ZONE};
+            travis/classic/wait.sh   ${TRAVIS_BRANCH};
           fi
+
+        - if [[ "$TRAVIS_BRANCH" =~ ^gke_feature.*$ ]]; then
+           travis/kubernetes/cluster.sh ${GCP_PROJECT_ID} ${GCP_ZONE} ${GKE_CLUSTER_NAME} ;
+           travis/kubernetes/build.sh ${IMAGE} ${TRAVIS_COMMIT};
+           travis/kubernetes/deploy.sh ${TRAVIS_BRANCH} ${TRAVIS_COMMIT};
+           travis/kubernetes/wait.sh ${TRAVIS_BRANCH};
+         fi
