@@ -1,7 +1,5 @@
 - encrypted the gcp_project_key.json using:
     travis encrypt-file --pro gcp_project_key.json
 
-#      provider: script
-#      on:
-#        all_branches: true
-#        condition: ${$TRAVIS_BRANCH} =~ ^feature\/.*$
+- make travis better:
+  - https://devopstutorialspoint.com/examples-of-conditional-build-stage-and-jobs-in-travis-ci/

@@ -15,5 +15,6 @@ envsubst < travis/kubernetes/gke_template.yml > gke.yml
 
 echo -e "\n======Deploying to namespace: ${namespace} ======"
 cat gke.yml
+echo
 
 kubectl apply -f gke.yml
