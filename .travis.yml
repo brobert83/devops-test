@@ -28,7 +28,9 @@ jobs:
         - gcloud services enable cloudresourcemanager.googleapis.com
         - gcloud services enable compute.googleapis.com
         - gcloud services enable iam.googleapis.com
+
       script:
+
         - travis/delete.sh
           ${TRAVIS_BRANCH}
           ${GCP_PROJECT_ID}
@@ -42,3 +44,9 @@ jobs:
           ${GCP_ZONE}
           ${FRONTEND_PORT}
           ${BACKEND_PORT}
+
+        - travis/deploy.sh ${TRAVIS_BRANCH} ${GCP_ZONE}
+
+        - travis/start.sh ${TRAVIS_BRANCH} ${GCP_ZONE}
+
+        - travis/wait.sh ${TRAVIS_BRANCH}

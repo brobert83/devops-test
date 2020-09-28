@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 name=$(echo $1 | tr -cd "'[:alnum:]")
 
 project=$2
@@ -24,8 +22,9 @@ frontend_forwarding_rule=${name}-frontend-forwarding-rule
 firewall_lb_allow_name=${name}-fw-allow-health-check-and-proxy
 firewall_lb_allow_tag=${name}-allow-hc-and-proxy
 
-echo -e "\nCreating environment: ${name}\n"
+echo -e "\n====== Creating environment: ${name} ======"
 
+echo -e "\nCreate firewall rule"
 gcloud compute firewall-rules create ${firewall_lb_allow_name} \
     --network=default \
     --action=allow \
@@ -34,10 +33,12 @@ gcloud compute firewall-rules create ${firewall_lb_allow_name} \
     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
     --rules=tcp:3000
 
+echo -e "\nCreate IPv4 address"
 gcloud compute addresses create ${address_name} \
     --ip-version=IPV4 \
     --global
 
+echo -e "\nCreate instance template"
 gcloud beta compute \
    --project=${project} instance-templates create ${instance_template} \
    --region=${region} \
@@ -59,14 +60,10 @@ gcloud beta compute \
    --reservation-affinity=any \
     --metadata=startup-script='#! /bin/bash
      apt-get update
-     apt-get install apache2 -y
-     a2ensite default-ssl
-     a2enmod ssl
-     vm_hostname="$(curl -H "Metadata-Flavor:Google" http://169.254.169.254/computeMetadata/v1/instance/name)"
-     echo "Page served from: $vm_hostname" | tee /var/www/html/index.html
-     sed -i "s/Listen 80/Listen 3000/g" /etc/apache2/ports.conf
-     systemctl restart apache2'
+     curl -sL https://deb.nodesource.com/setup_12.x | bash
+     apt install nodejs'
 
+echo -e "\nCreate instance group"
 gcloud compute \
    --project=${project} instance-groups managed create ${instance_group_name} \
    --base-instance-name=${instance_group_name} \
@@ -74,12 +71,15 @@ gcloud compute \
    --size=2 \
    --zone=${zone}
 
+echo -e "\nSet named port on instance group"
 gcloud compute instance-groups unmanaged set-named-ports ${instance_group_name} \
     --named-ports http:${backend_port} \
     --zone ${zone}
 
+echo -e "\nCreate health check"
 gcloud compute health-checks create http ${health_check_name} --port ${backend_port}
 
+echo -e "\nCreate backend service"
 gcloud compute backend-services create ${service_name} \
     --global-health-checks \
     --protocol=HTTP \
@@ -87,6 +87,7 @@ gcloud compute backend-services create ${service_name} \
     --health-checks=${health_check_name} \
     --global
 
+echo -e "\nAdd instance group as backend to the backend service"
 gcloud compute backend-services add-backend ${service_name} \
     --balancing-mode=UTILIZATION \
     --max-utilization=0.8 \
@@ -95,12 +96,15 @@ gcloud compute backend-services add-backend ${service_name} \
     --instance-group-zone=${zone} \
     --global
 
+echo -e "\nCreate url map"
 gcloud compute url-maps create ${url_map_name} \
     --default-service ${service_name}
 
+echo -e "\nCreate http proxy"
 gcloud compute target-http-proxies create ${http_proxy_name} \
     --url-map ${url_map_name}
 
+echo -e "\nCreate frontend forwarding rule"
 gcloud compute forwarding-rules create ${frontend_forwarding_rule} \
     --address=${address_name} \
     --global \
@@ -109,16 +113,4 @@ gcloud compute forwarding-rules create ${frontend_forwarding_rule} \
 
 frontend_ip=$(gcloud compute forwarding-rules describe ${frontend_forwarding_rule} --format=json --global | jq --raw-output '.IPAddress')
 
-set +x
-
-echo -e "Frontend IP: ${frontend_ip}\n"
-
-#todo: enable this when things are stable
-#echo "Waiting to become available "
-#
-#until $(curl --output /dev/null --silent --head --fail http://${frontend_ip}); do
-#    echo -n '.'
-#    sleep 5
-#done
-#
-#echo "Deployment done"
+echo -e "\nFrontend IP: ${frontend_ip}\n"
