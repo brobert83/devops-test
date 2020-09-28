@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: devops-test
-          image: gcr.io/${PROJECT_NAME}/${CLUSTER_NAME}:${CONTAINER_VERSION}
+          image: ${IMAGE}:${CONTAINER_VERSION}
           ports:
             - containerPort: 3000
           imagePullPolicy: Always

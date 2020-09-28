@@ -50,6 +50,6 @@ jobs:
         - if [[ "$TRAVIS_BRANCH" =~ ^gke_feature.*$ ]]; then
            travis/kubernetes/cluster.sh ${GCP_PROJECT_ID} ${GCP_ZONE} ${GKE_CLUSTER_NAME} ;
            travis/kubernetes/build.sh ${IMAGE} ${TRAVIS_COMMIT};
-           travis/kubernetes/deploy.sh ${TRAVIS_BRANCH} ${TRAVIS_COMMIT} ${GCP_PROJECT_ID} ${GKE_CLUSTER_NAME};
+           travis/kubernetes/deploy.sh ${TRAVIS_BRANCH} ${TRAVIS_COMMIT} ${IMAGE};
            travis/kubernetes/wait.sh ${TRAVIS_BRANCH};
          fi
