@@ -1,9 +1,8 @@
-FROM node:12
-
-WORKDIR /opt/app
-
+FROM node:12 AS builder
 COPY * ./
+RUN npm test
 
-RUN npm test && npm install
-
+FROM node:12
+WORKDIR /opt/app
+COPY --from=builder /index.js /package.json ./
 ENTRYPOINT npm start
