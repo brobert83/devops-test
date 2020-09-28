@@ -17,6 +17,7 @@ for instance in $(gcloud compute instance-groups list-instances ${instance_group
 
   echo "Starting app on ${instance}"
 
+  # I'm not proud of this, I tried several options but all caused travis to hang
   gcloud compute ssh root@${instance} --command="cd /opt/buildit-devops-test && screen -dm npm start" --zone=${zone}
 
 done

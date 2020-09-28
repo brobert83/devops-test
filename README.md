@@ -1,28 +1,42 @@
-# DevOps Engineer - Technical Test	
-We think infrastructure is best represented as code, and provisioning of resources should be automated as much as possible.	
+# General notes [![Build Status](https://travis-ci.com/brobert83/devops-test.svg?branch=master)](https://travis-ci.com/brobert83/devops-test)
 
- Your task is to create a CI build pipeline that deploys this web application to a load-balanced	
-environment. You are free to complete the test in a local environment (using tools like Vagrant and	
-Docker) or use any CI service, provisioning tool and cloud environment you feel comfortable with (we	
-recommend creating a free tier account so you don't incur any costs).	
+This application is built using TravisCI.
 
- * Your CI job should:	
-  * Run when a feature branch is pushed to Github (you should fork this repository to your Github account). If you are working locally feel free to use some other method for triggering your build.	
-  * Deploy to a target environment when the job is successful.	
-* The target environment should consist of:	
-  * A load-balancer accessible via HTTP on port 80.	
-  * Two application servers (this repository) accessible via HTTP on port 3000.	
-* The load-balancer should use a round-robin strategy.	
-* The application server should return the response "Hi there! I'm being served from {hostname}!".	
+The specification is here [Technical test](docs/TechnicalTest.md)
 
- ## Context	
-We are testing your ability to implement modern automated infrastructure, as well as general knowledge of system administration. In your solution you should emphasize readability, maintainability and DevOps methodologies.	
+The build will:
+- Run the tests
+- Provision a environment in GCP (every branch gets it's own environment)
+- Deploy the application 
+- Start the application
+- Wait until it is available on a public IP
 
- ## Submit your solution	
-Create a public Github repository and push your solution in it. Commit often - we would rather see a history of trial and error than a single monolithic push. When you're finished, send us the URL to the repository.	
+## Implementation details
 
- ## Running this web application	
- This is a NodeJS application:	This is a NodeJS application:
+- The build is configured to run against my personal GCP account
+    - to make it run against another account:
+        - create a GCP project
+        - create a service account with owner permissions
+        - create a key for that account
+        - encrypt the key for Travis using `travis encrypt-file --pro ${key_file}` 
+          - you will need to be have the travis cli installed and travis needs to be aware of the repo under which you want to encrypt 
+          - replace the line just below `before_install:` in `.travis.yml` with the one in the output of that command
+          - more details about this [here](https://docs.travis-ci.com/user/encrypting-files/)
+        - edit the `.travis.yml` global variables to point to your project (project name, service account name, etc)
+        
+- When a branch is created or a commit is pushed to a branch, this build will create a environment specific to that branch
+    - the name of the environment is the branch name will all characters but letters and numbers removed (due to GCP naming restrictions for various resources)            
+    - the build will first attempt to delete the branch specific environment before creating it
+    - this is the output of the last successful build: https://travis-ci.com/github/brobert83/devops-test/builds/186913415
+    - at the end it shows where the app is deployed 
+    ![Alt text](docs/output_target.png?raw=true)
+    - I will keep this one alive for a while http://35.190.76.97 
+    
+- The environment creation scripts where largely developed using this environment [devops-test-vm](https://github.com/brobert83/devops-test-vm)    
 
-- `npm test` runs the application tests	- `npm test` runs the application tests
-- `npm start` starts the http server
+# Caveats
+- On branch delete the environment will NOT be deleted (I don't know how to do that yet)
+  - to delete it run `travis/delete.sh ${branch_name} ${zone}` 
+    - use the dev environment machine [devops-test-vm](https://github.com/brobert83/devops-test-vm) or another environment where you have gcloud access
+- Travis won't build on master (don't know why, need to look into it, don't really want to fix it, I can commit on master without building a env)     
+  - maybe I'll configure travis to provision only for specific branch names, ones starting with `feature/` for example (and fix the master build)  
