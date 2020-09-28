@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - 12
+install: if [[ "$TRAVIS_BRANCH" =~ ^feature.*$ ]]; then npm test; fi
+
 services: docker
 env:
   global:
