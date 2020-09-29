@@ -1,8 +1,9 @@
 #!/bin/bash
 
 project=$1
-zone=$2
-cluster_name=$3
+region=$2
+zone=$3
+cluster_name=$4
 
 # Create the cluster if it does not exist
 [ "$(gcloud container clusters list --filter="name:${cluster_name}" --format="get(NAME)")" != "${cluster_name}" ] && \
@@ -26,8 +27,8 @@ cluster_name=$3
     --num-nodes "3" \
     --enable-stackdriver-kubernetes \
     --enable-ip-alias \
-    --network "projects/buildit-devops-test/global/networks/default" \
-    --subnetwork "projects/buildit-devops-test/regions/us-central1/subnetworks/default" \
+    --network "projects${project}/global/networks/default" \
+    --subnetwork "projects${project}/regions/${region}/subnetworks/default" \
     --default-max-pods-per-node "8" \
     --no-enable-master-authorized-networks \
     --addons HorizontalPodAutoscaling,HttpLoadBalancing \
