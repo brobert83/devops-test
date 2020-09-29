@@ -17,12 +17,12 @@ for instance in $(gcloud compute instance-groups list-instances ${instance_group
   gcloud compute ssh root@${instance} --zone=${zone} --command="rm -rf /opt/buildit-devops-test || true"
   gcloud compute ssh root@${instance} --zone=${zone} --command="sudo mkdir -p /opt/buildit-devops-test"
 
-  # this could definatly be done better
+  # this could definitely be done better
   gcloud compute scp \
     --strict-host-key-checking=no \
     --zone=${zone} \
-    index.js \
-    package.json \
+    src/index.js \
+    src/package.json \
     root@${instance}:/opt/buildit-devops-test \
     -q
 

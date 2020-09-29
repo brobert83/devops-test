@@ -1,2 +1,5 @@
 - encrypted the gcp_project_key.json using:
     travis encrypt-file --pro gcp_project_key.json
+
+- make travis better:
+  - https://devopstutorialspoint.com/examples-of-conditional-build-stage-and-jobs-in-travis-ci/
