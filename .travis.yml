@@ -4,6 +4,7 @@ node_js:
 install: if [[ "$TRAVIS_BRANCH" =~ ^feature.*$ ]]; then
            cd src;
            npm test;
+           cd ..;
          fi
 
 services: docker
