@@ -4,4 +4,4 @@ namespace=$(echo $1 | tr -cd "'[:alnum:]")
 
 kubectl delete -n ${namespace} pod,svc,ingress --all
 
-kubectl delete namspace ${namespace}
+kubectl delete namespace ${namespace}
