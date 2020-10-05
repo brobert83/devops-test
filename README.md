@@ -38,14 +38,14 @@ Branches that start with `gke_feature` will trigger a Kubernetes deployment.
 - The name of the environment is the branch name with all characters but letters and numbers removed (due to GCP naming restrictions for various resources)            
 - The build will first attempt to delete the branch specific environment before creating it
 - This is the output of a successful build: https://travis-ci.com/github/brobert83/devops-test/builds/186913415
-- I will keep this one alive for a while http://35.190.76.97 
+- **KILLED due to no feedback** I will keep this one alive for a while http://35.190.76.97
 
 ### KUBERNETES deployment
 - All branches are deployed in a single cluster but with the resources namespaced
 - A namespace is created for each branch
 - If the cluster does not exist it will be created
 - This is the output of a successful build: https://travis-ci.com/github/brobert83/devops-test/builds/187123554
-- This one is also live being served from the GKE cluster http://35.232.58.146
+- **KILLED due to no feedback** This one is also live being served from the GKE cluster http://35.232.58.146
     
 #### At the end of the build log, it shows where the app is deployed 
 ![Alt text](docs/output_target.png?raw=true)
